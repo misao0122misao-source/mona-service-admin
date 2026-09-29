@@ -1,0 +1,2239 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
+<title>サービス管理</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:#f5f5f5;
+  color:#222;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+}
+
+.container{
+  max-width:1100px;
+  margin:0 auto;
+  padding:20px 14px 60px;
+}
+
+h1{
+  text-align:center;
+  margin:5px 0 22px;
+  font-size:26px;
+}
+
+.card{
+  background:#fff;
+  border-radius:16px;
+  padding:18px;
+  margin-bottom:16px;
+  box-shadow:
+    0 2px 10px rgba(0,0,0,.06);
+}
+
+.section-title{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:15px;
+}
+
+.filters{
+  display:grid;
+  grid-template-columns:
+    repeat(4,1fr);
+  gap:10px;
+}
+
+.filter-item label{
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+input,
+select{
+  width:100%;
+  padding:12px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  font-size:15px;
+  background:#fff;
+}
+
+button{
+  border:none;
+  border-radius:10px;
+  padding:12px 15px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.search-button{
+  width:100%;
+  background:#222;
+  color:#fff;
+  margin-top:20px;
+}
+
+.csv-button{
+  background:#eee;
+  color:#222;
+}
+
+.summary-grid{
+  display:grid;
+  grid-template-columns:
+    repeat(3,1fr);
+  gap:10px;
+}
+
+.summary-box{
+  background:#f7f7f7;
+  border-radius:13px;
+  padding:16px;
+}
+
+.summary-label{
+  font-size:13px;
+  color:#777;
+  margin-bottom:7px;
+}
+
+.summary-value{
+  font-size:22px;
+  font-weight:700;
+}
+
+.payment-grid{
+  display:grid;
+  grid-template-columns:
+    repeat(5,1fr);
+  gap:10px;
+}
+
+.payment-box{
+  border:1px solid #eee;
+  border-radius:13px;
+  padding:14px;
+}
+
+.payment-name{
+  font-size:13px;
+  color:#777;
+}
+
+.payment-value{
+  font-size:19px;
+  font-weight:700;
+  margin-top:7px;
+}
+
+.staff-list{
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+}
+
+.staff-row{
+  display:grid;
+  grid-template-columns:
+    100px 1fr 130px;
+  align-items:center;
+  gap:10px;
+}
+
+.staff-name{
+  font-weight:600;
+}
+
+.staff-bar{
+  height:12px;
+  background:#eee;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.staff-bar-inner{
+  height:100%;
+  background:#555;
+  border-radius:20px;
+}
+
+.staff-total{
+  text-align:right;
+  font-weight:700;
+}
+
+.source-grid{
+  display:grid;
+  grid-template-columns:
+    repeat(3,1fr);
+  gap:10px;
+}
+
+.source-box{
+  background:#f7f7f7;
+  border-radius:12px;
+  padding:14px;
+}
+
+.source-name{
+  font-size:13px;
+  color:#777;
+}
+
+.source-value{
+  margin-top:5px;
+  font-weight:700;
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:900px;
+}
+
+th,
+td{
+  padding:11px 9px;
+  border-bottom:1px solid #eee;
+  text-align:left;
+  font-size:14px;
+  vertical-align:top;
+}
+
+th{
+  background:#f8f8f8;
+  font-weight:700;
+}
+
+.amount{
+  font-weight:700;
+}
+
+.delete-button{
+  background:#f3f3f3;
+  color:#666;
+  padding:7px 10px;
+  font-size:13px;
+}
+
+.loading{
+  text-align:center;
+  color:#888;
+  padding:25px;
+}
+
+.empty{
+  text-align:center;
+  color:#888;
+  padding:25px;
+}
+
+.message{
+  display:none;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:15px;
+  text-align:center;
+}
+
+.message.error{
+  display:block;
+  background:#fff0f0;
+  color:#c33;
+}
+
+.message.success{
+  display:block;
+  background:#eaf8ee;
+  color:#28753d;
+}
+
+@media(max-width:800px){
+
+  .filters{
+    grid-template-columns:
+      repeat(2,1fr);
+  }
+
+  .payment-grid{
+    grid-template-columns:
+      repeat(2,1fr);
+  }
+
+  .summary-grid{
+    grid-template-columns:
+      repeat(2,1fr);
+  }
+
+  .source-grid{
+    grid-template-columns:
+      repeat(2,1fr);
+  }
+
+}
+
+@media(max-width:520px){
+
+  .container{
+    padding:
+      15px 10px 50px;
+  }
+
+  .filters{
+    grid-template-columns:1fr;
+  }
+
+  .summary-grid{
+    grid-template-columns:1fr;
+  }
+
+  .payment-grid{
+    grid-template-columns:1fr;
+  }
+
+  .source-grid{
+    grid-template-columns:1fr;
+  }
+
+  .staff-row{
+    grid-template-columns:
+      80px 1fr 100px;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<h1>サービス管理</h1>
+
+
+<div
+  id="message"
+  class="message"
+></div>
+
+
+<!-- =========================
+     FILTER
+========================= -->
+
+<div class="card">
+
+<div class="section-title">
+検索条件
+</div>
+
+
+<div class="filters">
+
+
+<div class="filter-item">
+
+<label>
+開始日
+</label>
+
+<input
+  id="startDate"
+  type="date"
+>
+
+</div>
+
+
+<div class="filter-item">
+
+<label>
+終了日
+</label>
+
+<input
+  id="endDate"
+  type="date"
+>
+
+</div>
+
+
+<div class="filter-item">
+
+<label>
+スタッフ
+</label>
+
+<select id="staffFilter">
+
+<option value="">
+全スタッフ
+</option>
+
+</select>
+
+</div>
+
+
+<div class="filter-item">
+
+<label>
+支払い方法
+</label>
+
+<select id="paymentFilter">
+
+<option value="">
+全て
+</option>
+
+<option value="現金">
+現金
+</option>
+
+<option value="PayPay">
+PayPay
+</option>
+
+<option value="クレジットカード">
+クレジットカード
+</option>
+
+<option value="ポイント">
+ポイント
+</option>
+
+<option value="スマート">
+スマート
+</option>
+
+</select>
+
+</div>
+
+
+</div>
+
+
+<button
+  class="search-button"
+  onclick="loadDashboard()"
+>
+検索
+</button>
+
+</div>
+
+
+<!-- =========================
+     SUMMARY
+========================= -->
+
+<div class="card">
+
+<div class="section-title">
+売上サマリー
+</div>
+
+
+<div class="summary-grid">
+
+
+<div class="summary-box">
+
+<div class="summary-label">
+売上合計
+</div>
+
+<div
+  id="totalSales"
+  class="summary-value"
+>
+¥0
+</div>
+
+</div>
+
+
+<div class="summary-box">
+
+<div class="summary-label">
+お客様数
+</div>
+
+<div
+  id="customerCount"
+  class="summary-value"
+>
+0
+</div>
+
+</div>
+
+
+<div class="summary-box">
+
+<div class="summary-label">
+平均客単価
+</div>
+
+<div
+  id="averagePrice"
+  class="summary-value"
+>
+¥0
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     PAYMENT
+========================= -->
+
+<div class="card">
+
+<div class="section-title">
+支払い方法別
+</div>
+
+
+<div class="payment-grid">
+
+
+<div class="payment-box">
+
+<div class="payment-name">
+現金
+</div>
+
+<div
+  id="cashTotal"
+  class="payment-value"
+>
+¥0
+</div>
+
+</div>
+
+
+<div class="payment-box">
+
+<div class="payment-name">
+PayPay
+</div>
+
+<div
+  id="paypayTotal"
+  class="payment-value"
+>
+¥0
+</div>
+
+</div>
+
+
+<div class="payment-box">
+
+<div class="payment-name">
+クレジットカード
+</div>
+
+<div
+  id="creditTotal"
+  class="payment-value"
+>
+¥0
+</div>
+
+</div>
+
+
+<div class="payment-box">
+
+<div class="payment-name">
+ポイント
+</div>
+
+<div
+  id="pointTotal"
+  class="payment-value"
+>
+¥0
+</div>
+
+</div>
+
+
+<div class="payment-box">
+
+<div class="payment-name">
+スマート
+</div>
+
+<div
+  id="smartTotal"
+  class="payment-value"
+>
+¥0
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     STAFF
+========================= -->
+
+<div class="card">
+
+<div class="section-title">
+スタッフ別売上
+</div>
+
+<div
+  id="staffStats"
+  class="staff-list"
+>
+
+<div class="loading">
+読み込み中...
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     SOURCE
+========================= -->
+
+<div class="card">
+
+<div class="section-title">
+お客様来源
+</div>
+
+<div
+  id="sourceStats"
+  class="source-grid"
+>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     RECORDS
+========================= -->
+
+<div class="card">
+
+<div
+  style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:15px;
+  "
+>
+
+<div class="section-title"
+     style="margin:0;">
+記録一覧
+</div>
+
+<button
+  class="csv-button"
+  onclick="exportCSV()"
+>
+CSV出力
+</button>
+
+</div>
+
+
+<div
+  id="recordCount"
+  style="
+    color:#777;
+    font-size:13px;
+    margin-bottom:10px;
+  "
+>
+0件
+</div>
+
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>
+日付
+</th>
+
+<th>
+時間
+</th>
+
+<th>
+スタッフ
+</th>
+
+<th>
+お客様
+</th>
+
+<th>
+来源
+</th>
+
+<th>
+支払い
+</th>
+
+<th>
+合計
+</th>
+
+<th>
+操作
+</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="recordsBody">
+
+<tr>
+
+<td
+  colspan="8"
+  class="loading"
+>
+読み込み中...
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+"https://isspcmbqmwgvchkttief.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_5V4yaPwaEzSRXbN054Qyag_MpT7EZtX";
+
+const API_URL =
+SUPABASE_URL + "/rest/v1";
+
+
+/* =========================================================
+   DATA
+========================================================= */
+
+let staffList = [];
+
+let allRecords = [];
+
+let allPayments = [];
+
+let filteredRecords = [];
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+document.addEventListener(
+"DOMContentLoaded",
+async function(){
+
+  setDefaultDates();
+
+  await loadStaff();
+
+  await loadDashboard();
+
+});
+
+
+/* =========================================================
+   DATE
+========================================================= */
+
+function formatDateInput(date){
+
+  const year =
+    date.getFullYear();
+
+  const month =
+    String(
+      date.getMonth()+1
+    ).padStart(2,"0");
+
+  const day =
+    String(
+      date.getDate()
+    ).padStart(2,"0");
+
+  return (
+    year +
+    "-" +
+    month +
+    "-" +
+    day
+  );
+
+}
+
+
+function setDefaultDates(){
+
+  const now =
+    new Date();
+
+
+  const first =
+    new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      1
+    );
+
+
+  document.getElementById(
+    "startDate"
+  ).value =
+    formatDateInput(
+      first
+    );
+
+
+  document.getElementById(
+    "endDate"
+  ).value =
+    formatDateInput(
+      now
+    );
+
+}
+
+
+/* =========================================================
+   SUPABASE REQUEST
+========================================================= */
+
+async function supabaseFetch(
+  endpoint,
+  options={}
+){
+
+  const response =
+    await fetch(
+      API_URL + endpoint,
+      {
+
+        ...options,
+
+        headers:{
+
+          "apikey":
+            SUPABASE_KEY,
+
+          "Authorization":
+            "Bearer " +
+            SUPABASE_KEY,
+
+          "Content-Type":
+            "application/json",
+
+          "Prefer":
+            "return=representation",
+
+          ...(options.headers || {})
+
+        }
+
+      }
+    );
+
+
+  if(!response.ok){
+
+    const text =
+      await response.text();
+
+    throw new Error(
+      text ||
+      "Supabase error"
+    );
+
+  }
+
+
+  const text =
+    await response.text();
+
+
+  if(!text){
+    return [];
+  }
+
+
+  return JSON.parse(text);
+
+}
+
+
+/* =========================================================
+   STAFF
+========================================================= */
+
+async function loadStaff(){
+
+  try{
+
+    staffList =
+      await supabaseFetch(
+        "/staff?select=id,name,active,sort_order&order=sort_order.asc"
+      );
+
+
+    const select =
+      document.getElementById(
+        "staffFilter"
+      );
+
+
+    select.innerHTML =
+      '<option value="">全スタッフ</option>';
+
+
+    staffList.forEach(
+      function(staff){
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+        option.value =
+          staff.id;
+
+        option.textContent =
+          staff.name;
+
+        select.appendChild(
+          option
+        );
+
+      }
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      "スタッフを取得できませんでした。",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   LOAD DASHBOARD
+========================================================= */
+
+async function loadDashboard(){
+
+  try{
+
+    showLoading();
+
+
+    const startDate =
+      document.getElementById(
+        "startDate"
+      ).value;
+
+
+    const endDate =
+      document.getElementById(
+        "endDate"
+      ).value;
+
+
+    const staffId =
+      document.getElementById(
+        "staffFilter"
+      ).value;
+
+
+    const paymentMethod =
+      document.getElementById(
+        "paymentFilter"
+      ).value;
+
+
+    if(!startDate || !endDate){
+
+      showMessage(
+        "日付を選択してください。",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    if(startDate > endDate){
+
+      showMessage(
+        "開始日は終了日より前にしてください。",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------
+       records
+    ----------------------------------------- */
+
+    let recordUrl =
+      "/service_records" +
+      "?select=*" +
+      "&service_date=gte." +
+      encodeURIComponent(
+        startDate
+      ) +
+      "&service_date=lte." +
+      encodeURIComponent(
+        endDate
+      ) +
+      "&order=service_date.desc,service_time.desc";
+
+
+    if(staffId){
+
+      recordUrl +=
+        "&staff_id=eq." +
+        encodeURIComponent(
+          staffId
+        );
+
+    }
+
+
+    allRecords =
+      await supabaseFetch(
+        recordUrl
+      );
+
+
+    /* -----------------------------------------
+       payments
+    ----------------------------------------- */
+
+    const recordIds =
+      allRecords.map(
+        function(record){
+          return record.id;
+        }
+      );
+
+
+    allPayments = [];
+
+
+    if(recordIds.length){
+
+      allPayments =
+        await supabaseFetch(
+
+          "/service_payments" +
+          "?select=*" +
+          "&service_record_id=in.(" +
+          recordIds.join(",") +
+          ")"
+
+        );
+
+    }
+
+
+    /* -----------------------------------------
+       payment filter
+    ----------------------------------------- */
+
+    if(paymentMethod){
+
+      const paymentRecordIds =
+        new Set(
+
+          allPayments
+            .filter(
+              function(payment){
+
+                return (
+                  payment.payment_method ===
+                  paymentMethod
+                );
+
+              }
+            )
+            .map(
+              function(payment){
+                return String(
+                  payment.service_record_id
+                );
+              }
+            )
+
+        );
+
+
+      filteredRecords =
+        allRecords.filter(
+          function(record){
+
+            return paymentRecordIds.has(
+              String(record.id)
+            );
+
+          }
+        );
+
+
+    }else{
+
+      filteredRecords =
+        allRecords.slice();
+
+    }
+
+
+    renderDashboard();
+
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      "データの取得に失敗しました。",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   RENDER DASHBOARD
+========================================================= */
+
+function renderDashboard(){
+
+  let totalSales =
+    0;
+
+
+  let paymentTotals = {
+
+    "現金":0,
+
+    "PayPay":0,
+
+    "クレジットカード":0,
+
+    "ポイント":0,
+
+    "スマート":0
+
+  };
+
+
+  const visibleRecordIds =
+    new Set(
+      filteredRecords.map(
+        function(record){
+          return String(record.id);
+        }
+      )
+    );
+
+
+  const visiblePayments =
+    allPayments.filter(
+      function(payment){
+
+        return visibleRecordIds.has(
+          String(
+            payment.service_record_id
+          )
+        );
+
+      }
+    );
+
+
+  visiblePayments.forEach(
+    function(payment){
+
+      const amount =
+        Number(
+          payment.amount
+        ) || 0;
+
+
+      totalSales +=
+        amount;
+
+
+      if(
+        paymentTotals[
+          payment.payment_method
+        ] !== undefined
+      ){
+
+        paymentTotals[
+          payment.payment_method
+        ] +=
+          amount;
+
+      }
+
+    }
+  );
+
+
+  const customerCount =
+    filteredRecords.length;
+
+
+  const average =
+    customerCount
+      ? Math.round(
+          totalSales /
+          customerCount
+        )
+      : 0;
+
+
+  document.getElementById(
+    "totalSales"
+  ).textContent =
+    yen(totalSales);
+
+
+  document.getElementById(
+    "customerCount"
+  ).textContent =
+    customerCount +
+    "人";
+
+
+  document.getElementById(
+    "averagePrice"
+  ).textContent =
+    yen(average);
+
+
+  document.getElementById(
+    "cashTotal"
+  ).textContent =
+    yen(
+      paymentTotals["現金"]
+    );
+
+
+  document.getElementById(
+    "paypayTotal"
+  ).textContent =
+    yen(
+      paymentTotals["PayPay"]
+    );
+
+
+  document.getElementById(
+    "creditTotal"
+  ).textContent =
+    yen(
+      paymentTotals[
+        "クレジットカード"
+      ]
+    );
+
+
+  document.getElementById(
+    "pointTotal"
+  ).textContent =
+    yen(
+      paymentTotals[
+        "ポイント"
+      ]
+    );
+
+
+  document.getElementById(
+    "smartTotal"
+  ).textContent =
+    yen(
+      paymentTotals[
+        "スマート"
+      ]
+    );
+
+
+  renderStaffStats();
+
+  renderSourceStats();
+
+  renderRecords();
+
+}
+
+
+/* =========================================================
+   STAFF STATS
+========================================================= */
+
+function renderStaffStats(){
+
+  const container =
+    document.getElementById(
+      "staffStats"
+    );
+
+
+  container.innerHTML =
+    "";
+
+
+  if(!staffList.length){
+
+    container.innerHTML =
+      '<div class="empty">スタッフがありません。</div>';
+
+    return;
+
+  }
+
+
+  const totals = {};
+
+
+  staffList.forEach(
+    function(staff){
+
+      totals[staff.id] =
+        0;
+
+    }
+  );
+
+
+  const visibleIds =
+    new Set(
+      filteredRecords.map(
+        function(record){
+          return String(record.id);
+        }
+      )
+    );
+
+
+  allPayments.forEach(
+    function(payment){
+
+      if(
+        !visibleIds.has(
+          String(
+            payment.service_record_id
+          )
+        )
+      ){
+        return;
+      }
+
+
+      const record =
+        filteredRecords.find(
+          function(item){
+
+            return String(
+              item.id
+            ) === String(
+              payment.service_record_id
+            );
+
+          }
+        );
+
+
+      if(!record){
+        return;
+      }
+
+
+      if(
+        totals[record.staff_id] !==
+        undefined
+      ){
+
+        totals[record.staff_id] +=
+          Number(
+            payment.amount
+          ) || 0;
+
+      }
+
+    }
+  );
+
+
+  const max =
+    Math.max(
+      ...Object.values(
+        totals
+      ),
+      1
+    );
+
+
+  staffList.forEach(
+    function(staff){
+
+      const total =
+        totals[staff.id] || 0;
+
+
+      const percent =
+        Math.round(
+          total /
+          max *
+          100
+        );
+
+
+      const row =
+        document.createElement(
+          "div"
+        );
+
+
+      row.className =
+        "staff-row";
+
+
+      row.innerHTML = `
+
+        <div class="staff-name">
+          ${escapeHTML(
+            staff.name
+          )}
+        </div>
+
+        <div class="staff-bar">
+
+          <div
+            class="staff-bar-inner"
+            style="width:${percent}%"
+          ></div>
+
+        </div>
+
+        <div class="staff-total">
+          ${yen(total)}
+        </div>
+
+      `;
+
+
+      container.appendChild(
+        row
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   SOURCE STATS
+========================================================= */
+
+function renderSourceStats(){
+
+  const container =
+    document.getElementById(
+      "sourceStats"
+    );
+
+
+  container.innerHTML =
+    "";
+
+
+  const sourceTotals = {};
+
+
+  filteredRecords.forEach(
+    function(record){
+
+      const source =
+        record.customer_source ||
+        "その他";
+
+
+      if(
+        !sourceTotals[source]
+      ){
+
+        sourceTotals[source] =
+          0;
+
+      }
+
+
+      sourceTotals[source]++;
+
+    }
+  );
+
+
+  const sources =
+    Object.entries(
+      sourceTotals
+    );
+
+
+  if(!sources.length){
+
+    container.innerHTML =
+      '<div class="empty">データがありません。</div>';
+
+    return;
+
+  }
+
+
+  sources.sort(
+    function(a,b){
+      return b[1] - a[1];
+    }
+  );
+
+
+  sources.forEach(
+    function(item){
+
+      const box =
+        document.createElement(
+          "div"
+        );
+
+
+      box.className =
+        "source-box";
+
+
+      box.innerHTML = `
+
+        <div class="source-name">
+          ${escapeHTML(item[0])}
+        </div>
+
+        <div class="source-value">
+          ${item[1]}人
+        </div>
+
+      `;
+
+
+      container.appendChild(
+        box
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   RECORDS
+========================================================= */
+
+function renderRecords(){
+
+  const body =
+    document.getElementById(
+      "recordsBody"
+    );
+
+
+  document.getElementById(
+    "recordCount"
+  ).textContent =
+    filteredRecords.length +
+    "件";
+
+
+  body.innerHTML =
+    "";
+
+
+  if(!filteredRecords.length){
+
+    body.innerHTML = `
+
+      <tr>
+
+        <td
+          colspan="8"
+          class="empty"
+        >
+          データがありません。
+        </td>
+
+      </tr>
+
+    `;
+
+    return;
+
+  }
+
+
+  filteredRecords.forEach(
+    function(record){
+
+      const staff =
+        staffList.find(
+          function(item){
+
+            return String(
+              item.id
+            ) === String(
+              record.staff_id
+            );
+
+          }
+        );
+
+
+      const payments =
+        allPayments.filter(
+          function(payment){
+
+            return String(
+              payment.service_record_id
+            ) === String(
+              record.id
+            );
+
+          }
+        );
+
+
+      let total =
+        0;
+
+
+      let paymentText =
+        "";
+
+
+      payments.forEach(
+        function(payment){
+
+          const amount =
+            Number(
+              payment.amount
+            ) || 0;
+
+
+          total +=
+            amount;
+
+
+          paymentText +=
+            escapeHTML(
+              payment.payment_method
+            ) +
+            " " +
+            yen(amount) +
+            "<br>";
+
+        }
+      );
+
+
+      const tr =
+        document.createElement(
+          "tr"
+        );
+
+
+      tr.innerHTML = `
+
+        <td>
+          ${escapeHTML(
+            record.service_date
+          )}
+        </td>
+
+        <td>
+          ${escapeHTML(
+            formatTime(
+              record.service_time
+            )
+          )}
+        </td>
+
+        <td>
+          ${escapeHTML(
+            staff
+              ? staff.name
+              : "-"
+          )}
+        </td>
+
+        <td>
+          ${
+            record.customer_name
+              ? escapeHTML(
+                  record.customer_name
+                )
+              : "-"
+          }
+        </td>
+
+        <td>
+          ${escapeHTML(
+            record.customer_source ||
+            ""
+          )}
+        </td>
+
+        <td>
+          ${paymentText || "-"}
+        </td>
+
+        <td class="amount">
+          ${yen(total)}
+        </td>
+
+        <td>
+
+          <button
+            class="delete-button"
+            onclick="deleteRecord(${record.id})"
+          >
+            削除
+          </button>
+
+        </td>
+
+      `;
+
+
+      body.appendChild(
+        tr
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   DELETE
+========================================================= */
+
+async function deleteRecord(
+  recordId
+){
+
+  const ok =
+    confirm(
+      "このサービス記録を削除しますか？\n支払い情報も削除されます。"
+    );
+
+
+  if(!ok){
+    return;
+  }
+
+
+  try{
+
+    await supabaseFetch(
+
+      "/service_records?id=eq." +
+      encodeURIComponent(
+        recordId
+      ),
+
+      {
+        method:"DELETE"
+      }
+
+    );
+
+
+    showMessage(
+      "削除しました。",
+      "success"
+    );
+
+
+    await loadDashboard();
+
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      "削除に失敗しました。",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CSV
+========================================================= */
+
+function exportCSV(){
+
+  if(!filteredRecords.length){
+
+    showMessage(
+      "出力するデータがありません。",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  const rows = [];
+
+
+  rows.push([
+    "日付",
+    "時間",
+    "スタッフ",
+    "お客様",
+    "来源",
+    "支払い",
+    "合計"
+  ]);
+
+
+  filteredRecords.forEach(
+    function(record){
+
+      const staff =
+        staffList.find(
+          function(item){
+
+            return String(
+              item.id
+            ) === String(
+              record.staff_id
+            );
+
+          }
+        );
+
+
+      const payments =
+        allPayments.filter(
+          function(payment){
+
+            return String(
+              payment.service_record_id
+            ) === String(
+              record.id
+            );
+
+          }
+        );
+
+
+      let total =
+        0;
+
+
+      const paymentText =
+        payments.map(
+          function(payment){
+
+            const amount =
+              Number(
+                payment.amount
+              ) || 0;
+
+
+            total +=
+              amount;
+
+
+            return (
+              payment.payment_method +
+              " " +
+              amount
+            );
+
+          }
+        ).join(
+          " / "
+        );
+
+
+      rows.push([
+
+        record.service_date,
+
+        formatTime(
+          record.service_time
+        ),
+
+        staff
+          ? staff.name
+          : "",
+
+        record.customer_name
+          || "",
+
+        record.customer_source
+          || "",
+
+        paymentText,
+
+        total
+
+      ]);
+
+    }
+  );
+
+
+  const csv =
+    "\uFEFF" +
+    rows
+      .map(
+        function(row){
+
+          return row.map(
+            function(value){
+
+              return '"' +
+                String(
+                  value
+                ).replace(
+                  /"/g,
+                  '""'
+                ) +
+                '"';
+
+            }
+          ).join(",");
+
+        }
+      )
+      .join("\n");
+
+
+  const blob =
+    new Blob(
+      [csv],
+      {
+        type:
+          "text/csv;charset=utf-8;"
+      }
+    );
+
+
+  const url =
+    URL.createObjectURL(
+      blob
+    );
+
+
+  const a =
+    document.createElement(
+      "a"
+    );
+
+
+  a.href =
+    url;
+
+
+  a.download =
+    "service_records_" +
+    formatDateInput(
+      new Date()
+    ) +
+    ".csv";
+
+
+  a.click();
+
+
+  URL.revokeObjectURL(
+    url
+  );
+
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+function showLoading(){
+
+  document.getElementById(
+    "recordsBody"
+  ).innerHTML = `
+
+    <tr>
+
+      <td
+        colspan="8"
+        class="loading"
+      >
+        読み込み中...
+      </td>
+
+    </tr>
+
+  `;
+
+}
+
+
+/* =========================================================
+   FORMAT
+========================================================= */
+
+function yen(
+  amount
+){
+
+  return (
+    "¥" +
+    Number(
+      amount || 0
+    ).toLocaleString(
+      "ja-JP"
+    )
+  );
+
+}
+
+
+function formatTime(
+  value
+){
+
+  if(!value){
+    return "";
+  }
+
+
+  return String(
+    value
+  ).substring(
+    0,
+    5
+  );
+
+}
+
+
+/* =========================================================
+   ESCAPE
+========================================================= */
+
+function escapeHTML(
+  value
+){
+
+  if(
+    value === null ||
+    value === undefined
+  ){
+
+    return "";
+
+  }
+
+
+  return String(value)
+
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+
+    .replace(
+      /</g,
+      "&lt;"
+    )
+
+    .replace(
+      />/g,
+      "&gt;"
+    )
+
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+function showMessage(
+  text,
+  type
+){
+
+  const message =
+    document.getElementById(
+      "message"
+    );
+
+
+  message.textContent =
+    text;
+
+
+  message.className =
+    "message " +
+    type;
+
+
+  setTimeout(
+    function(){
+
+      message.className =
+        "message";
+
+    },
+    4000
+  );
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>
